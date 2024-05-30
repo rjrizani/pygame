@@ -44,7 +44,7 @@ while running:
     increase_brush_text = font.render('+', True, black)
     toolbar.blit(pen_text, (40, 20))
     toolbar.blit(eraser_text, (80, 20))
-    toolbar.blit(decrease_brush_text, (120, 20))
+    toolbar.blit(decrease_brush_text, (140, 20))
     toolbar.blit(increase_brush_text, (160, 20))
 
     #draw color selection buttons
@@ -58,4 +58,45 @@ while running:
     window.blit(canvas, (0, toolbar_height))
     window.blit(toolbar, (0, 0))
 
-    pygame.display.update()
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.pos[1] <= toolbar_height:
+                pen_rect = pen_text.get_rect(topleft=(40, 20))
+                ereser_rect = eraser_text.get_rect(topleft=(80, 20))
+                decrease_rect = decrease_brush_text.get_rect(topleft=(140, 20))
+                increase_rect = increase_brush_text.get_rect(topleft=(160, 20))
+
+                if pen_rect.collidepoint(event.pos):
+                    eraser_mode = False
+                elif ereser_rect.collidepoint(event.pos):
+                    eraser_mode = True
+                elif decrease_rect.collidepoint(event.pos):
+                    brush_size -= 1
+                    if brush_size < min_brush_size:
+                        brush_size = min_brush_size
+                elif increase_rect.collidepoint(event.pos):
+                    brush_size += 1
+                    if brush_size > max_brush_size:
+                        brush_size = max_brush_size
+                elif black_color_button.collidepoint(event.pos):
+                    brush_color = black
+                elif red_color_button.collidepoint(event.pos):
+                    brush_color = red
+
+            else:
+                drawing = True
+                last_pos = event.pos
+
+        elif event.type == pygame.MOUSEMOTION:
+            if drawing and not eraser_mode:
+                pygame.draw.line(canvas, brush_color, last_pos, event.pos, brush_size)
+                last_pos = event.pos
+        elif event.type == pygame.MOUSEBUTTONUP:
+            drawing = False
+
+
+    pygame.display.flip()
+
+pygame.quit()
