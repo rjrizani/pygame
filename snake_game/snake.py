@@ -127,12 +127,40 @@ def main():
                     snake.change_direction(1, 0)
         snake.move()
 
+        head = snake.get_head()
+        if distance(head, food.get_position()) < 20:
+            snake.grow()
+            food.respawn()
+            score += 1
 
+        #cek kalo snake nyetuh diri sendiri
+        if head in snake.get_body():
+            #draw gameOver
+            font = pygame.font.Font(None, 50)
+            text = font.render("Game Over", True, BLACK)
+            window.blit(text, (WIDTH // 2 - text.get_width() // 2, HIGHT // 2 - text.get_height() // 2))
+            pygame.display.update()
+            time.sleep(2)
+            pygame.quit()
+            return
 
+        window.fill(WHITE)
 
+        #draw snake's body as black rectangles
+        for segment in snake.body:
+            pygame.draw.rect(window, BLACK, (segment[0], segment[1], 20, 20))
 
+        RED = (255, 0, 0)
+        #draw food as a red circle
+        pygame.draw.circle(window, RED, food.get_position(), 10)
 
+        #draw score
+        font = pygame.font.Font(None, 30)
+        text = font.render("Score: " + str(score), True, BLACK)
+        window.blit(text, (10, 10))
 
+        pygame.display.update()
+        clock.tick(snake_speed)
 
 if __name__ == "__main__":
     main()
