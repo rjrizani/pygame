@@ -1,37 +1,39 @@
-# Import modules
 import pygame, sys
-from pygame.locals import QUIT
+from pygame.locals import QUIT, MOUSEBUTTONDOWN
 
-# Initializes Pygame
 pygame.init()
 
-# Set up the window
-window_width, window_height = 400, 300
+window_width, window_height = 400,300
 window = pygame.display.set_mode((window_width, window_height))
-pygame.display.set_caption('Ping Pong')
+pygame.display.set_caption("Ping pong")
 
-# Colors
-BLACK = (0, 0, 0)
-GREEN = (0, 255, 0)
-WHITE = (255, 255, 255)
+#colors
+WHITE = (255,255,255)
+RED = (255,0,0)
+GREEN = (0,255,0)
+BLUE = (0,0,255)
+BLACK = (0,0,0)
 
-# Paddle
-paddle_width, paddle_height = 80, 10
-paddle_x, paddle_y = (window_width - paddle_width) // 2, window_height - paddle_height - 10
+#PADDLE
+paddle_width = 10
+paddle_height = 80
 
-# Ball
-ball_radius = 5
-ball_x, ball_y = window_width // 2, window_height // 2
-ball_speed_x, ball_speed_y = 3, -3
+paddle_x = window_width // 2 - paddle_width // 2            #POSISI DITENGAH
+paddle_y = window_height - paddle_height - 10                   #POSISI BAWAH
 
-# Score
+#BALL
+ball_x = window_width // 2
+ball_y = window_height // 2
+ball_radius = 10
+ball_x_speed = 3
+ball_y_speed = -3
+
+#score
 score = 0
+font = pygame.font.SysFont(None, 36)
 
-# Font for displaying score
-font = pygame.font.Font(None, 36)
-
-# Game loop
 game_over = False
+
 
 while not game_over:
     for event in pygame.event.get():
@@ -39,58 +41,54 @@ while not game_over:
             pygame.quit()
             sys.exit()
 
-    # Move the paddle with left and right arrow keys
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] and paddle_x > 0:
-        paddle_x -= 5
-    if keys[pygame.K_RIGHT] and paddle_x < window_width - paddle_width:
-        paddle_x += 5
+        #move the paddle
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] and paddle_x > 0:
+            paddle_x -= 5
+        if keys[pygame.K_RIGHT] and paddle_x < window_width - paddle_width:
+            paddle_x += 5
 
-    # Move the ball
-    ball_x += ball_speed_x
-    ball_y += ball_speed_y
+        #move the ball
+        ball_x += ball_x_speed
+        ball_y += ball_y_speed
 
-    # Draw everything
+
+    #draw everthing
     window.fill(WHITE)
-    paddle = pygame.draw.rect(window, GREEN, (paddle_x, paddle_y, paddle_width, paddle_height))
+    paddle = pygame.draw.rect(window, BLACK, (paddle_x, paddle_y, paddle_height, paddle_width))
     ball = pygame.draw.circle(window, BLACK, (ball_x, ball_y), ball_radius)
 
-    # Display the score
-    score_text = font.render("Score: " + str(score), True, BLACK)
+    score_text = font.render("Score: " + str(score), True, BLUE)
     window.blit(score_text, (10, 10))
 
     pygame.display.update()
 
-    # Ball collisions with walls
+    # ball collision with walls
     if ball.left <= 0 or ball.right >= window_width:
-        ball_speed_x *= -1
+        ball_x_speed *= -1
     if ball.top <= 0:
-        ball_speed_y *= -1
+        ball_y_speed *= -1
 
-
-    # Ball collisions with paddle using colliderect
+    #ball collision with paddle
     if pygame.Rect.colliderect(ball, paddle):
-        ball_speed_y *= -1
+        ball_y_speed *= -1
         score += 1
 
-    # Check if the ball touches the bottom line
+
     if ball.bottom >= window_height:
         game_over = True
 
-    # Control the game's speed (adjust this value to change the game's speed)
     pygame.time.delay(30)
 
-# Clear the screen and display the "Game Over" message in the middle
-window.fill(WHITE)
-score_text = font.render("Score: " + str(score), True, BLACK)
+window.fill(RED)
+score_text = font.render("Score: " + str(score), True, BLUE)
 window.blit(score_text, (10, 10))
-game_over_text = font.render("Game Over", True, BLACK)
-window.blit(game_over_text,
-            ((window_width - game_over_text.get_width()) // 2, (window_height - game_over_text.get_height()) // 2))
+game_over_text = font.render("Game Over", True, BLUE)
+window.blit(game_over_text, (window_width // 2 - game_over_text.get_width() // 2, window_height // 2 - game_over_text.get_height() // 2))
 pygame.display.update()
 
-# Wait for a few seconds before closing the window
 pygame.time.delay(2000)
-# Game over, quit Pygame
 pygame.quit()
 sys.exit()
+
+
