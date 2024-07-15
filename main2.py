@@ -58,6 +58,9 @@ while not game_over:
             pygame.quit()
             sys.exit()
 
+        if event.type == MOUSEBUTTONDOWN:
+            change_spinner()
+
     window.blit(background_image, (0,0))
 
     #rotate the spinner based on mouse move
@@ -70,8 +73,16 @@ while not game_over:
     rotate_spinner =pygame.transform.rotate(spinner_image[current_spinner], -spinner_rotation)
     spinner_rect = rotate_spinner.get_rect(center = (spinner_x, spinner_y))
 
-    window.blit(rotate_spinner, spinner_rect)
+    window.blit(rotate_spinner, spinner_rect)           #draw spinner
+
+
+    spinner_text = font.render(str(spinner_rotation_speed), True, RED)
+    window.blit(spinner_text, (300, 10))
     pygame.display.update()
+    pygame.time.delay(30)
+
+
+
 
 pygame.quit()
 sys.exit()

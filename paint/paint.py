@@ -2,101 +2,115 @@ import pygame
 from pygame.locals import QUIT
 
 pygame.init()
+pygame.display.set_caption("Paint")
 
-window_width, window_height = 400, 300
+WIDTH  = 400
+HEIGHT = 300
 toolbar_height = 50
 
-white = (255, 255, 255)
-black = (0, 0, 0)
-gray = (128, 128, 128)
-red=(255,0,0)
+#color
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+GREY = (128, 128, 128)
 
 #create the window
-window = pygame.display.set_mode((window_width, window_height))
-pygame.display.set_caption('Paint')
+WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 
-#Variables
+#VARIABEL
 drawing = False
-brush_size = 2
-min_brush_size = 1
-max_brush_size = 10
-brush_color = black
-eraser_mode = False
+brush_size = 5
+min_brush_size = 2
+max_brush_size = 50
+brush_color = BLACK
+erase_mode = False
 last_pos = None
 
-#create canvas
-canvas = pygame.Surface((window_width, window_height - toolbar_height))
-canvas.fill(white)
+#create a surface for drawing
+canvas = pygame.Surface((WIDTH, HEIGHT - toolbar_height))
+canvas.fill(WHITE)
 
-#create a toolbar
-toolbar = pygame.Surface((window_width, toolbar_height))
-toolbar.fill(gray)
+#create the toolbar
+toolbar = pygame.Surface((WIDTH, toolbar_height))
+toolbar.fill(GREY)
 
-#main loop of the program
 running = True
 while running:
+    toolbar.fill(GREY)
+    font = pygame.font.SysFont(None, 24)
+    pen_text = font.render("P", True, BLACK)
+    erase_text = font.render("E", True, BLACK)
+    clear_text = font.render("C", True, BLACK)
+    decrease_text = font.render("-", True, BLACK)
+    incerease_text = font.render("+", True, BLACK)
 
-    toolbar.fill(gray)
-    font = pygame.font.SysFont(None, 25)
-    pen_text = font.render('Pen', True, black)
-    eraser_text = font.render('Eraser', True, black)
-    decrease_brush_text = font.render('-', True, black)
-    increase_brush_text = font.render('+', True, black)
     toolbar.blit(pen_text, (40, 20))
-    toolbar.blit(eraser_text, (80, 20))
-    toolbar.blit(decrease_brush_text, (140, 20))
-    toolbar.blit(increase_brush_text, (160, 20))
+    toolbar.blit(erase_text, (80, 20))
+    toolbar.blit(clear_text, (120, 20))
+    toolbar.blit(decrease_text, (160, 20))
+    toolbar.blit(incerease_text, (200, 20))
 
-    #draw color selection buttons
-    color_button_width =20
-    color_button_hight = 20
-    black_color_button = pygame.draw.circle(toolbar,black,(240,25),color_button_width//2)
-    red_color_button = pygame.draw.circle(toolbar,red,(280,25),color_button_width//2)
+    #draw the color selection buttons
+    color_button_width = 20
+    color_button_height = 20
+    black_button_color = pygame.draw.circle(toolbar,BLACK,(240,25),color_button_width//2)
+    red_button_color = pygame.draw.circle(toolbar,RED,(280,25), color_button_width//2)
 
-    window.fill(white)
-
-    window.blit(canvas, (0, toolbar_height))
-    window.blit(toolbar, (0, 0))
+    WINDOW.fill(WHITE)
+    WINDOW.blit(canvas, (0, toolbar_height))
+    WINDOW.blit(toolbar, (0, 0))
 
     for event in pygame.event.get():
         if event.type == QUIT:
-            running = False
+            running =False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.pos[1] <= toolbar_height:
-                pen_rect = pen_text.get_rect(topleft=(40, 20))
-                ereser_rect = eraser_text.get_rect(topleft=(80, 20))
-                decrease_rect = decrease_brush_text.get_rect(topleft=(140, 20))
-                increase_rect = increase_brush_text.get_rect(topleft=(160, 20))
+                pen_rect = pen_text.get_rect(topleft =(40,20))
+                erase_rect = erase_text.get_rect(topleft=(80,20))
+                decrease_rect = decrease_text.get_rect(topleft=(160, 20))
+                increase_rect = incerease_text.get_rect(topleft=(200, 20))
 
                 if pen_rect.collidepoint(event.pos):
-                    eraser_mode = False
-                elif ereser_rect.collidepoint(event.pos):
-                    eraser_mode = True
+                    erase_mode =False
+                    print("pen")
+                elif erase_rect.collidepoint(event.pos):
+                    erase_mode = True
+                    print("erase")
                 elif decrease_rect.collidepoint(event.pos):
-                    brush_size -= 1
-                    if brush_size < min_brush_size:
-                        brush_size = min_brush_size
+                    if brush_size > min_brush_size:
+                        brush_size -= 1
                 elif increase_rect.collidepoint(event.pos):
-                    brush_size += 1
-                    if brush_size > max_brush_size:
-                        brush_size = max_brush_size
-                elif black_color_button.collidepoint(event.pos):
-                    brush_color = black
-                elif red_color_button.collidepoint(event.pos):
-                    brush_color = red
-
+                    if brush_size < max_brush_size:
+                        brush_size += 1
+                elif black_button_color.collidepoint(event.pos):
+                    brush_color = BLACK
+                    print("black")
+                elif red_button_color.collidepoint(event.pos):
+                    brush_color = RED
             else:
                 drawing = True
-                last_pos = event.pos
-
-        elif event.type == pygame.MOUSEMOTION:
-            if drawing and not eraser_mode:
-                pygame.draw.line(canvas, brush_color, last_pos, event.pos, brush_size)
-                last_pos = event.pos
+                last_pos = (event.pos[0], event.pos[1] - toolbar_height)
         elif event.type == pygame.MOUSEBUTTONUP:
             drawing = False
+            last_pos = None
+        elif event.type == pygame.MOUSEMOTION and drawing:
+            color = brush_color if not erase_mode else WHITE
+            pygame.draw.line(canvas, color, last_pos, (event.pos[0], event.pos[1] - toolbar_height), brush_size)
+            last_pos = (event.pos[0], event.pos[1] - toolbar_height)
+
+
+
 
 
     pygame.display.flip()
 
 pygame.quit()
+
+
+
+
+
+
+

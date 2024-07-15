@@ -1,4 +1,6 @@
 import tkinter as tk
+from playsound import playsound
+import time
 
 window = tk.Tk()
 
@@ -19,34 +21,34 @@ def on_button():
 button = tk.Button(window, text="click me", command=on_button)
 button.pack()
 '''
+
 window.title("Counter App")
 window.config(bg="lightblue")
+
+count = 0
+
+
 def increase():
-    global counter
-    counter += 1
-    lebel.config(text=f"Counter: {counter}")
+    global count
+    count += 1
+    label.config(text="Counter: " + str(count))
+
+
+
 
 def decrease():
-    global counter
-    counter -= 1
-    lebel.config(text=f"Counter: {counter}")
-
-counter = 0
-lebel = tk.Label(text=f"Counter: {counter}")
-lebel.pack(pady=20)
-
-increase_button = tk.Button(text="Increase", command=increase,
-                            bg="green", fg="white", font=("Arial", 20),
-                            borderwidth=1,relief=tk.RIDGE,
-                            activebackground="green",
-                            )
-increase_button.pack(side="left",pady=20,padx=10)
-
-decrease_button = tk.Button(text="Decrease", command=decrease)
-decrease_button.pack(side="left",pady=20, padx=10)
+    global count
+    count -= 1
+    label.config(text="Counter: " + str(count))
 
 
+label = tk.Label(text="Counter: ", bg="red", fg="white", font=("Arial", 20))
+label.pack(pady = 10)
 
+increase_button = tk.Button(text="increase", bg="green", fg="white", font=("Arial", 20), command = increase)
+increase_button.pack(side=tk.LEFT, padx = 10, pady = 20)
 
+decrease_button = tk.Button(text="decrease", bg="blue", fg="white", font=("Arial", 20), command= decrease)
+decrease_button.pack(side=tk.LEFT, padx = 10, pady = 20)
 
 window.mainloop()

@@ -62,3 +62,64 @@ def close_game():
 def update_background():
     global background1_y, background2_y
     background1_y = (background1_y + 1) % window_height
+    background2_y = background1_y - window_height
+    window.blit(background1, (0, background1_y))
+    window.blit(background2, (0, background2_y))
+
+background1_y = 0
+background2_y = window_height
+
+while game_running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            game_running = False
+            close_game()
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        spaceship_x -= spaceship_speed
+        if spaceship_x < 0:
+            spaceship_x = 0
+    if keys[pygame.K_RIGHT]:
+        spaceship_x += spaceship_speed
+        if spaceship_x > window_width - spaceship_width:
+            spaceship_x = window_width - spaceship_width
+
+    window.fill((0, 0, 0))
+    update_background()
+    window.blit(spaceship_img, (spaceship_x, spaceship_y))
+
+
+    #asteroid spawn
+    if random.randint(0,100) < 2:
+        asteroid_x = random.randint(30, window_width - 30)
+        asteroid_scale = random.uniform(min_asteroid_scale, max_asteroid_scale)
+        asteroid = Asteroid(asteroid_x, -int(asteroid_height * asteroid_scale), asteroid_img, asteroid_scale)
+        asteroids.append(asteroid)
+
+    #rectangles to represent the collision
+    spaceship_rect = pygame.Rect(spaceship_x, spaceship_y, spaceship_width, spaceship_height)
+
+    #move and draw the asteroids
+    for asteroid in asteroids:
+        asteroid.move(1)
+        asteroid_rect = pygame.Rect(asteroid.x, asteroid.y, asteroid.image.get_width(), asteroid.image.get_height())
+        asteroid.draw(window)
+
+        if spaceship_rect.colliderect(asteroid_rect):
+            game_running = False
+            close_game()
+
+    #remove the asteroids that have passed the screen
+    asteroids = [asteroid for asteroid in asteroids if asteroid.y < window_height]
+
+    pygame.display.update()
+    clock.tick(60)
+
+
+
+
+
+pygame.quit()
+sys.exit()
+
