@@ -4,7 +4,7 @@ from tkinter import messagebox
 
 
 
-root = tk.Tk()
+root = tk.Tk()   #buat object
 root.title("Registration Form")
 root.configure(background="lavender")
 
@@ -17,7 +17,31 @@ style.configure("TButton", foreground="white", background="red", font=("Arial", 
 style.configure("TCombobox", foreground="black", background="lavender")
 
 def submit():
-    print("test berhasil")
+    name = name_entry.get()
+    email = email_entry.get()
+    password = password_entry.get()
+    confirm_password = confirm_password_entry.get()
+    gender = gender_var.get()
+    country = country_combobox.get()
+    bio = bio_textbox.get("1.0", tk.END).strip()
+    print(name, email, password, confirm_password, gender, country, bio)
+
+    if not name or not email or not password or not confirm_password or not gender or not country or not bio:
+        messagebox.showerror("Error", "Please fill in all fields")
+        return
+
+    if password != confirm_password:
+        messagebox.showerror("Error", "Passwords do not match")
+        return
+
+    messagebox.showinfo("Success", "Registration successful!")
+    name_entry.delete(0, tk.END)
+    email_entry.delete(0, tk.END)
+    password_entry.delete(0, tk.END)
+    confirm_password_entry.delete(0, tk.END)
+    country_combobox.set("")
+    bio_textbox.delete("1.0", tk.END)
+
 
 name_label = ttk.Label(root, text="Name: ")
 name_label.grid(row=0, column=0, padx=10, pady=10, sticky=tk.W)
