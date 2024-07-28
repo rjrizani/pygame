@@ -3,62 +3,57 @@ from datetime import datetime
 from tkinter import messagebox
 import pytz
 
-#set timezone zone to malaysia
-tz = pytz.timezone("Asia/Kuala_Lumpur")
+jakarta = pytz.timezone('Asia/Jakarta')
 
 def update_time():
-    current_time = datetime.now(tz).strftime(time_format.get())
+    current_time= datetime.now(jakarta).strftime(time_format.get())
     label.config(text=current_time)
-    label.after(1000, update_time)  #1000ms = 1sec
+    label.after(1000, update_time)
     check_alarm(current_time)
+
 
 def set_alarm():
     alarm_time_str = alarm_time.get()
-    alarm_datetime = datetime.strptime(alarm_time_str, "%H:%M:%S")
+    alarm_datetime = datetime.strptime(alarm_time_str, '%H:%M:%S')
     alarm_hour = alarm_datetime.hour
     alarm_minute = alarm_datetime.minute
     alarm_second = alarm_datetime.second
-    alarm_active.set(True)
-    alarm_label.config(text="Alarm set for " + alarm_time_str)
+    print(alarm_time_str, alarm_hour, alarm_minute, alarm_second)
+    alarm_label.config(text=f"Alarm set for {alarm_time_str}")
 
 def check_alarm(current_time):
-    if alarm_active.get() and alarm_time.get() == current_time:
-        messagebox.showinfo("Alarm", "Time to Wake up!")
-        alarm_active.set(False)
-        alarm_label.config(text="")
-
+    if alarm_time.get() == current_time:
+        messagebox.showinfo("Alarm", "Wake up!")
 
 
 root = tk.Tk()
 root.title("Clock")
-root.geometry("400x350")
-root.configure(bg="lightblue")
+root.geometry("400x200")
+root.configure(bg="#FFC0CB")
 
-frame = tk.Frame(root, bg="lightblue")
-frame.place(relx=0.5, rely=0.5, anchor="center")
+label = tk.Label(root, text="Clock", bg="lightblue", fg="black")
+label.config(font=("Arial", 24))
+label.pack(pady=20)
 
-#create  a lebel to display the time
-label = tk.Label(frame, font=("Arial", 50), bg="lightblue", fg="black")
-label.pack()
-
-#set the time format
 time_format = tk.StringVar()
-time_format.set("%H:%M:%S")
+time_format.set('%H:%M:%S')
 
-alarm_time = tk.StringVar()
+alarm_time =tk.StringVar()
 alarm_entry = tk.Entry(root, textvariable=alarm_time, width=10)
-alarm_entry.pack(padx=10, pady=10)
+alarm_entry.pack(pady=10)
 
 #create button to set alarm
-set_alarm_button = tk.Button(root, text="Set Alarm", command=set_alarm)
-set_alarm_button.pack(padx=10, pady=10)
+btn_set = tk.Button(root, text="Set Alarm", bg="green", fg="white", command=set_alarm)
+btn_set.pack(pady=10)
 
 alarm_active = tk.BooleanVar()
 alarm_active.set(False)
-alarm_label = tk.Label(root, text="")
-alarm_label.pack(padx=10, pady=10)
+
+alarm_label = tk.Label(root, text="", bg="lightblue", fg="black")
+alarm_label.pack(pady=10)
 
 
 update_time()
+
 
 root.mainloop()
