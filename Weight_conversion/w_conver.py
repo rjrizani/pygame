@@ -4,7 +4,7 @@ import tkinter as tk
 #create window and title
 app = tk.Tk()
 app.title("Weight Conversion")
-app.geometry("400x250")
+app.geometry("500x250")
 
 #set background color
 app.configure(bg="lightblue")
@@ -27,15 +27,25 @@ drop.pack(pady = 5)
 
 def convert_weight():
     weight = entry_weight.get()
-
+    print(type(weight))
     selected_unit = unit_choices.get()
     print(weight, selected_unit)
     result_text.set("")
 
+    weight = float(weight)
+
     if selected_unit == "Kilograms to pounds":
-        result = float(weight) * 2.20462
-        print("terbacan", result)
-        result_text.set(f"{result} pounds")
+        result = weight * 2.205
+        result_text.set(f"{weight:.2f} kilograms is equal to {result:.2f} pounds")
+    elif selected_unit == "Pounds to kilograms":
+        result = weight / 2.205
+        result_text.set(f"{weight:.2f} pounds is equal to {result:.2f} kilograms")
+    elif selected_unit == "Kilograms to ounces":
+        result = weight * 35.274
+        result_text.set(f"{weight:.2f} kilograms is equal to {result:.2f} ounces")
+    elif selected_unit == "Ounces to kilograms":
+        result = weight / 35.274
+        result_text.set(f"{weight:.2f} ounces is equal to {result:.2f} kilograms")
 
 
 
@@ -48,7 +58,7 @@ btn_convert.pack(pady = 5)
 #result label
 result_text = tk.StringVar()
 
-result_label = tk.Label(app, text=result_text, bg="lightblue", fg="black")
+result_label = tk.Label(app, textvariable=result_text, bg="lightblue", fg="black")
 result_label.config(font=("Arial", 18))
 result_label.pack(pady = 5)
 

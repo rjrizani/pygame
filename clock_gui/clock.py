@@ -3,6 +3,13 @@ from datetime import datetime
 from tkinter import messagebox
 import pytz
 
+# import required module
+from playsound import playsound
+
+
+playsound("stab-f-01-brvhrtz-224599.mp3")
+print('playing sound using  playsound')
+
 jakarta = pytz.timezone('Asia/Jakarta')
 
 def update_time():
